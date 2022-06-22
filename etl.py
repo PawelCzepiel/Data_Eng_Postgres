@@ -7,6 +7,17 @@ from sql_queries import *
 
 
 def process_song_file(cur, filepath):
+    """
+  Description: This function can be used to read the file in the filepath (data/songs_data)
+  to get the song&artist related metadata and use it to populate the users and artists dim tables.
+
+  Arguments:
+      cur: the cursor object. 
+      filepath: songs data file path. 
+
+  Returns:
+      None
+  """
     # open song file
     df = pd.read_json(filepath, lines = True)
 
@@ -20,6 +31,17 @@ def process_song_file(cur, filepath):
 
 
 def process_log_file(cur, filepath):
+    """
+  Description: This function can be used to read the file in the filepath (data/log_data)
+  to get the user and time info and used to populate the users and time dim tables.
+
+  Arguments:
+      cur: the cursor object. 
+      filepath: log data file path. 
+
+  Returns:
+      None
+  """
     # open log file
     df = pd.read_json(filepath, lines = True)
 
@@ -62,6 +84,20 @@ def process_log_file(cur, filepath):
 
 
 def process_data(cur, conn, filepath, func):
+    """
+  Description: The purpose of this function is to:
+            - get the list of all json files from a given filepath
+            - for each file name execute nested function process_song_file/process_log_file
+                in order to populate all database dim tables as well as fact table.
+  Arguments:
+      cur: the cursor object. 
+      conn: Postgres database connection object
+      filepath: songs_data/log_data file path. 
+      func: nested function: process_song_file orprocess_log_file
+
+  Returns:
+      None
+  """
     # get all files matching extension from directory
     all_files = []
     for root, dirs, files in os.walk(filepath):
@@ -81,6 +117,20 @@ def process_data(cur, conn, filepath, func):
 
 
 def main():
+    """
+  Description: The purpose of this function is to execute all
+                above function in the proper order and given input:
+                - establish connection to Posgres database
+                - create cursor
+                - run process_song_file function
+                - run process_log_file function
+
+  Arguments:
+      None
+
+  Returns:
+      None
+  """
     conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=student password=student")
     cur = conn.cursor()
 
